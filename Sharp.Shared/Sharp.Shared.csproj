@@ -1,0 +1,90 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <LangVersion>13</LangVersion>
+        <Nullable>enable</Nullable>
+        <AssemblyName>Sharp.Shared</AssemblyName>
+        <RootNamespace>Sharp.Shared</RootNamespace>
+        <VersionPrefix>2.0</VersionPrefix>
+        <VersionSuffix>1</VersionSuffix>
+        <Version>$(VersionPrefix).$(VersionSuffix)</Version>
+        <PackageLicenseExpression>AGPL-3.0-only</PackageLicenseExpression>
+        <PackageProjectUrl>https://github.com/Kxnrl/ModSharp-public</PackageProjectUrl>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <SourceControlInformationFeatureSupported>true</SourceControlInformationFeatureSupported>
+        <Copyright>©2025 Kxnrl</Copyright>
+        <Authors>Kxnrl, BoneTM, laper32, Nukoooo</Authors>
+        <RepositoryUrl>https://github.com/Kxnrl/ModSharp-public</RepositoryUrl>
+        <EnableDynamicLoading>true</EnableDynamicLoading>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <BaseOutputPath>../.build/Sharp.Shared/</BaseOutputPath>
+        <PlatformTarget>x64</PlatformTarget>
+        <PackageId>ModSharp.$(AssemblyName)</PackageId>
+        <Title>ModSharp.$(AssemblyName)</Title>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+        <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+        <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>embedded</DebugType>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+        <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+        <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>embedded</DebugType>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <BuildDateTime>$([System.DateTime]::Now.ToString("yyyy-MM-dd HH:mm:ss"))</BuildDateTime>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Compile Remove="obj\**" />
+        <EmbeddedResource Remove="obj\**" />
+        <None Remove="obj\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+            <_Parameter1>BuildTime</_Parameter1>
+            <_Parameter2>$(BuildDateTime)</_Parameter2>
+        </AssemblyAttribute>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Google.Protobuf" Version="3.21.8" />
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.9" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.9" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.9" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="9.0.9" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.9" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.9" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.9" />
+        <PackageReference Include="Microsoft.Extensions.Diagnostics" Version="9.0.9" />
+        <PackageReference Include="Microsoft.Extensions.Diagnostics.Abstractions" Version="9.0.9" />
+        <PackageReference Include="Microsoft.Extensions.FileProviders.Abstractions" Version="9.0.9" />
+        <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="9.0.9" />
+        <PackageReference Include="Microsoft.Extensions.FileSystemGlobbing" Version="9.0.9" />
+        <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.9" />
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.9" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.9" />
+        <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.9" />
+        <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.9" />
+        <PackageReference Include="Microsoft.Extensions.Primitives" Version="9.0.9" />
+        <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="9.0.9" />
+        <PackageReference Include="System.Text.Encodings.Web" Version="9.0.9" />
+        <PackageReference Include="System.Text.Json" Version="9.0.9" />
+        <PackageReference Include="UnitGenerator" Version="2.0.0">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+</Project>

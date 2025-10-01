@@ -1,0 +1,155 @@
+﻿[project]
+name = "ModSharp"
+msvc-runtime = "dynamic"
+
+[conditions]
+release = "CMAKE_BUILD_TYPE STREQUAL \"Release\""
+debug = "CMAKE_BUILD_TYPE STREQUAL \"Debug\""
+
+#[vcpkg]
+#version = "2023.10.19"
+#packages = ["breakpad"]
+#
+#[find-package]
+#unofficial-breakpad = { required = true, config = true }
+
+[target.modsharp]
+type = "shared"
+compile-features = ["cxx_std_20"]
+
+# link
+private-link-libraries = ["protobuf"]
+windows.link-libraries = ["psapi", "tier0"]
+linux.link-directories = ["lib", "protobuf-lib"]
+linux.link-libraries = ["libtier0.so", "protobuf", "libsteam_api.so"]
+
+# flags
+msvc.compile-options = ["/utf-8"]
+msvc.link-options = ["/NODEFAULTLIB:libcmt"]
+
+gcc.compile-options = [
+    # /home/user/Documents/GitHub/modsharp/Engine/src/logging.h:7:5: warning: ‘nonnull’ argument ‘this’ compared to NULL [-Wnonnull-compare]
+    "-Wno-nonnull-compare",
+]
+
+linux.compile-options = [
+    "-Wall",
+    "-Wno-uninitialized",
+    "-Wno-switch",
+    "-Wno-unused",
+    "-Wno-non-virtual-dtor",
+    "-Wno-overloaded-virtual",
+    "-Wno-conversion-null",
+    "-Wno-write-strings",
+    "-Wno-invalid-offsetof",
+    "-Wno-reorder",
+
+    # /home/user/Documents/GitHub/modsharp/Engine/src/cstrike/type/CEntityInstance.h:47:28: warning: ‘maybe_unused’ attribute ignored [-Wattributes]
+    "-Wno-attributes",
+
+    # /home/user/Documents/GitHub/modsharp/Engine/src/manager/ConVarManager.cpp:112:9:
+    # warning: deleting object of polymorphic class type ‘SharpCommandCallback’ which has non-virtual destructor might cause undefined behavior [-Wdelete-non-virtual-dtor]
+    "-Wno-delete-non-virtual-dtor",
+
+    # /home/user/Documents/GitHub/modsharp/Engine/src/logging.cpp:90:24: warning: format not a string literal and no format arguments [-Wformat-security]
+    "-Wno-format-security",
+
+    # /home/user/Documents/GitHub/modsharp/Engine/src/hook/extern/TransmitManager.cpp:85:18: warning: suggest parentheses around arithmetic in operand of ‘|’ [-Wparentheses]
+    "-Wno-parentheses",
+
+    # /home/user/Documents/GitHub/modsharp/Engine/src/module_linux.cpp:183:32: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::size_t’ {aka ‘long unsigned int’} [-Wsign-compare]
+    "-Wno-sign-compare",
+
+    # special some MSVC pragma
+    "-Wno-unknown-pragmas",
+
+    "-msse4.1",
+    "-fno-strict-aliasing",
+    "-fno-threadsafe-statics",
+    "-fvisibility=default",
+]
+
+linux.link-options=[
+    "-fuse-ld=mold",
+    "-static-libgcc",
+    "-Wl,-Bstatic",
+    "-lstdc++",
+    "-Wl,-Bdynamic"
+]
+
+# define
+compile-definitions = [
+    "MODSHARP_EXPORTS",
+    "_USRDLL",
+    "__STDC_LIMIT_MACROS",
+    "X64BITS",
+    "_CRT_NO_VA_START_VALIDATION",
+    "_ITERATOR_DEBUG_LEVEL=0",
+]
+release.compile-definitions = ["NDEBUG"]
+debug.compile-definitions = ["_DEBUG", "DEBUG"]
+msvc.compile-definitions = [
+    "CRT_SECURE_NO_DEPRECATE",
+    "_CRT_SECURE_NO_WARNINGS",
+    "_CRT_NONSTDC_NO_DEPRECATE",
+]
+windows.compile-definitions = [
+    "_WINDOWS",
+    "WIN32",
+    "PLATFORM_WINDOWS",
+    "_WIN32",
+    "WINDOWS",
+    "COMPILER_MSVC64",
+    "COMPILER_MSVC",
+]
+linux.compile-definitions = [
+    "PLATFORM_POSIX",
+    "_LINUX",
+    "LINUX",
+    "POSIX",
+    "GNUC",
+    "stricmp=strcasecmp",
+    "_stricmp=strcasecmp",
+    "_strnicmp=strncasecmp",
+    "strnicmp=strncasecmp",
+    "_snprintf=snprintf",
+    "_vsnprintf=vsnprintf",
+    "_alloca=alloca",
+    "strcmpi=strcasecmp",
+    "_GLIBCXX_USE_CXX11_ABI=0",
+    "ZYCORE_STATIC_BUILD",
+    "ZYDIS_STATIC_BUILD",
+]
+
+# source
+sources = [
+    "vendors/zydis/Zydis.c",
+    "vendors/safetyhook/safetyhook.cpp",
+
+    "src/**.cpp",
+    "src/proto/network_connection.pb.cc",
+    "src/proto/networkbasetypes.pb.cc",
+    "src/proto/usermessages.pb.cc",
+    "src/proto/cstrike15_gcmessages.pb.cc",
+    "src/proto/cstrike15_usermessages.pb.cc",
+    "src/proto/engine_gcmessages.pb.cc",
+    "src/proto/gcsdk_gcmessages.pb.cc",
+    "src/proto/steammessages.pb.cc",
+    "src/proto/netmessages.pb.cc",
+    "src/proto/cs_usercmd.pb.cc",
+    "src/proto/usercmd.pb.cc",
+]
+
+# windows release will use /MT then with this memoverride
+release.msvc-runtime = "static"
+
+# include
+include-directories = [
+    "vendors/zydis/",
+    "vendors/safetyhook/include",
+    "vendors/expected/include",
+    "vendors/steamworks/include",
+    "vendors/protobuf/src",
+    "vendors/json/",
+    "src",
+]
