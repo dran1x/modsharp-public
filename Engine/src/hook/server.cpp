@@ -1,4 +1,4 @@
-/* 
+/*
  * ModSharp
  * Copyright (C) 2023-2025 Kxnrl. All Rights Reserved.
  *
@@ -34,6 +34,7 @@
 #include "cstrike/interface/IGameSpawnGroupMgr.h"
 #include "cstrike/interface/IGameSystem.h"
 #include "cstrike/interface/IResourceManifest.h"
+#include "cstrike/interface/IScriptVM.h"
 #include "cstrike/type/CGlobalVars.h"
 #include "cstrike/type/CNetworkGameServer.h"
 #include "cstrike/type/CServerSideClient.h"
@@ -42,15 +43,10 @@
 #include <Zydis.h>
 #include <safetyhook.hpp>
 
-#define PATCH_VSCRIPT_NEW
-
 // #define SERVER_HOOK_ASSERT
 
+static bool             s_bPatchVScriptVM;
 static CConVarBaseData* ms_fix_spawngroups_leak = nullptr;
-
-#ifdef PATCH_VSCRIPT_NEW
-#    include "cstrike/interface/IScriptVM.h"
-#endif
 
 BeginMemberHookScope(CSource2Server)
 {
@@ -159,9 +155,8 @@ BeginMemberHookScope(CGameRulesGameSystem)
     {
         LOG("%10s: %f", "time", Plat_FloatTime());
 
-#ifdef PATCH_VSCRIPT_NEW
-        AssertPtr(g_pScriptVM);
-#endif
+        if (s_bPatchVScriptVM)
+            AssertPtr(g_pScriptVM);
 
         g_pHookManager->Call_GameActivate(HookType_Pre);
 
@@ -249,8 +244,6 @@ BeginMemberHookScope(CNavMesh)
     }
 }
 
-#ifdef PATCH_VSCRIPT_NEW
-
 BeginMemberHookScope(CCSGOVScriptGameSystem)
 {
     DeclareMemberDetourHook(DestroyVM, void, (CCSGOVScriptGameSystem * pScriptSystem))
@@ -274,7 +267,6 @@ BeginMemberHookScope(IScriptVM)
         return value;
     }
 }
-#endif
 
 static void PatchEnableVScript()
 {
@@ -306,6 +298,11 @@ static void PatchEnableVScript()
 
         return true;
     });
+
+    InstallMemberDetourAutoSig(IScriptVM, CreateVM);
+    InstallMemberDetourAutoSig(CCSGOVScriptGameSystem, DestroyVM);
+
+    s_bPatchVScriptVM = true;
 }
 
 void InstallServerHooks()
@@ -336,15 +333,8 @@ void InstallServerHooks()
         InstallMemberDetourAutoSig(CNavMesh, GetNearestNavArea);
     }
 
-#ifdef PATCH_VSCRIPT_NEW
-
     if (CommandLine()->HasParam("-fucking_lua_map"))
         PatchEnableVScript();
-
-    InstallMemberDetourAutoSig(IScriptVM, CreateVM);
-    InstallMemberDetourAutoSig(CCSGOVScriptGameSystem, DestroyVM);
-
-#endif
 
     g_pHookManager->Hook_ClientPutInServer(HookType_Post, [](PlayerSlot_t slot, const char* a2, SteamId_t steamid) {
         if (!g_pSpawnGroupMgr)

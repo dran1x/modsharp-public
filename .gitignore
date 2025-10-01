@@ -408,12 +408,10 @@ FodyWeavers.xsd
 .deploy
 .build
 
-# Assets
-Engine/src/gamedata.assets.h
-
 # Modules
-StarDance/
-StarDance.sln
+Solution.sln
+Solution.sln.DotSettings
+Solution.sln.DotSettings.user
 
 # CMake
 # CMakeLists.txt

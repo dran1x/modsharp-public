@@ -1,4 +1,4 @@
-/* 
+/*
  * ModSharp
  * Copyright (C) 2023-2025 Kxnrl. All Rights Reserved.
  *
@@ -288,7 +288,7 @@ void InstallGameRulesHooks()
 
     sv_kick_players_with_cooldown = icvar->FindConVarIterator("sv_kick_players_with_cooldown");
 
-    ms_override_team_limit      = g_ConVarManager.CreateConVar("ms_override_team_limit", false, "Override Team limit.", FCVAR_RELEASE);
+    ms_override_team_limit = g_ConVarManager.CreateConVar("ms_override_team_limit", false, "Override Team limit.", FCVAR_RELEASE);
     ms_fix_kick_cooldown   = g_ConVarManager.CreateConVar("ms_fix_kick_cooldown", true, "Fix GC cooldown reject connection.", FCVAR_RELEASE);
 }
 
