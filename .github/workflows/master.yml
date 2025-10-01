@@ -1,0 +1,270 @@
+name: Master Build
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  windows-build:
+    runs-on: windows-2022
+
+    steps:
+      # TimeZone
+      - name: Set Timezone
+        uses: szenius/set-timezone@v2.0
+        with:
+          timezoneLinux: "Asia/Shanghai"
+          timezoneMacos: "Asia/Shanghai"
+          timezoneWindows: "China Standard Time"
+
+      # CheckOut
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+          fetch-depth: 99999
+
+      # Check Git
+      - name: Check Git
+        shell: bash
+        run: |
+          DATETIME=$(date +"%Y/%m/%d %H:%M:%S")
+          COMMIT_VERSION=$(git rev-list --count HEAD)
+          COMMIT_HASH=$(git rev-parse --short HEAD)
+          echo $DATETIME
+          echo $COMMIT_VERSION
+          echo "GITCOMMIT=$COMMIT_VERSION" >> $GITHUB_ENV
+          echo "GITDATE=$DATETIME" >> $GITHUB_ENV
+          echo "GITHASH=$COMMIT_HASH" >> $GITHUB_ENV
+
+      # CheckOut SubModules
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 1
+
+      # Create Version Header
+      - name: Versioning
+        shell: bash
+        env:
+          GITCOMMIT: ${{env.GITCOMMIT}}
+          GITDATE: ${{env.GITDATE}}
+          GITHASH: ${{env.GITHASH}}
+        run: |
+          echo "#pragma once" > ./Engine/src/version_auto.h
+          echo "#define GIT_VERSION ${{env.GITCOMMIT}} " >> ./Engine/src/version_auto.h
+          echo "#define GIT_VERSION_STR \"${{env.GITCOMMIT}}\" " >> ./Engine/src/version_auto.h
+          echo "#define BUILD_DATE \"${{env.GITDATE}}\" " >> ./Engine/src/version_auto.h
+          echo "#define COMMIT_HASH \"${{env.GITHASH}}\" " >> ./Engine/src/version_auto.h
+
+      # .NET
+      - name: Install .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      # MSVC
+      # 我也不知道为什么没屁用, 找不到msbuild
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@v2
+        with:
+          msbuild-architecture: x64
+
+      # Prepare Build
+      - name: Prepare Build
+        shell: bash
+        run: |
+          mkdir ./build
+          mkdir ./build/sharp
+          mkdir ./build/sharp/bin
+          mkdir ./build/sharp/bin/win64
+          mkdir ./build/sharp/core
+          mkdir ./build/sharp/configs
+          mkdir ./build/sharp/gamedata
+
+      # Build Loader
+      - name: Build Loader
+        shell: cmd
+        run: |
+          :: See https://github.com/microsoft/vswhere/wiki/Find-VC
+          for /f "usebackq delims=*" %%i in (`vswhere -latest -property installationPath`) do (
+            call "%%i"\Common7\Tools\vsdevcmd.bat -arch=x64 -host_arch=x64
+          )
+
+          :: Loop over all environment variables and make them global.
+          for /f "delims== tokens=1,2" %%a in ('set') do (
+            echo>>"%GITHUB_ENV%" %%a=%%b
+          )
+          set CURRENT_DIR=%CD%
+          msbuild Loader/Loader.vcxproj /p:Configuration=Release /p:Platform=x64 /p:OutDir=%CURRENT_DIR%/build/sharp/bin/win64/ /p:IntermediateOutputPath=./obj/ /p:Optimize=2
+
+      # Build Engine
+      - name: Build Engine
+        shell: cmd
+        run: |
+          :: See https://github.com/microsoft/vswhere/wiki/Find-VC
+          for /f "usebackq delims=*" %%i in (`vswhere -latest -property installationPath`) do (
+            call "%%i"\Common7\Tools\vsdevcmd.bat -arch=x64 -host_arch=x64
+          )
+
+          :: Loop over all environment variables and make them global.
+          for /f "delims== tokens=1,2" %%a in ('set') do (
+            echo>>"%GITHUB_ENV%" %%a=%%b
+          )
+          set CURRENT_DIR=%CD%
+          msbuild Engine/ModSharp.vcxproj /p:Configuration=Release /p:Platform=x64 /p:OutDir=%CURRENT_DIR%/build/sharp/bin/ /p:IntermediateOutputPath=./obj/ /p:PreBuildEventUseInBuild=false /p:Optimize=2
+
+      # Build Sharp.Core
+      - name: Build Sharp.Core
+        shell: bash
+        env:
+          GITCOMMIT: ${{env.GITCOMMIT}}
+        run: dotnet publish Sharp.Core/Sharp.Core.csproj -f net9.0 -r win-x64 --no-self-contained -c Release --output ./build/sharp/core -p:VersionSuffix=${{env.GITCOMMIT}}
+
+      # Copy Assets
+      - name: Copy Assets
+        shell: bash
+        run: |
+          cp -r ./.asset/configs  ./build/sharp
+          cp -r ./.asset/gamedata ./build/sharp
+
+      # Upload
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        if: github.event_name == 'push'
+        env:
+          GITCOMMIT: ${{env.GITCOMMIT}}
+        with:
+          name: ModSharp-git${{env.GITCOMMIT}}-windows
+          path: ./build
+          if-no-files-found: error
+          retention-days: 30
+
+  linux-build:
+    runs-on: ubuntu-latest
+    container:
+      image: registry.gitlab.steamos.cloud/steamrt/sniper/sdk:latest
+    steps:
+      - name: Install Linux packages
+        run: |
+          sudo apt update
+          sudo apt install -yq --no-install-recommends g++-multilib build-essential
+
+      - name: Use GCC14
+        run: |
+          PATH="/usr/lib/gcc-14/bin:$PATH"
+
+      - name: Install Clang19
+        run: |
+          apt update && apt install -y clang-19
+
+      # TimeZone
+      - name: Set Timezone
+        uses: szenius/set-timezone@v2.0
+        with:
+          timezoneLinux: "Asia/Shanghai"
+          timezoneMacos: "Asia/Shanghai"
+          timezoneWindows: "China Standard Time"
+
+      # SteamRT3 capabilities
+      - name: Mark repository as safe
+        run: git config --global --add safe.directory $GITHUB_WORKSPACE
+
+      # CheckOut
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+          fetch-depth: 99999
+
+      # Check Git
+      - name: Check Git
+        shell: bash
+        run: |
+          DATETIME=$(date +"%Y/%m/%d %H:%M:%S")
+          COMMIT_VERSION=$(git rev-list --count HEAD)
+          COMMIT_HASH=$(git rev-parse --short HEAD)
+          echo $DATETIME
+          echo $COMMIT_VERSION
+          echo "GITCOMMIT=$COMMIT_VERSION" >> $GITHUB_ENV
+          echo "GITDATE=$DATETIME" >> $GITHUB_ENV
+          echo "GITHASH=$COMMIT_HASH" >> $GITHUB_ENV
+
+      # CheckOut SubModules
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 1
+
+      # Create Version Header
+      - name: Versioning
+        shell: bash
+        env:
+          GITCOMMIT: ${{env.GITCOMMIT}}
+          GITDATE: ${{env.GITDATE}}
+          GITHASH: ${{env.GITHASH}}
+        run: |
+          echo "#pragma once" > ./Engine/src/version_auto.h
+          echo "#define GIT_VERSION ${{env.GITCOMMIT}} " >> ./Engine/src/version_auto.h
+          echo "#define GIT_VERSION_STR \"${{env.GITCOMMIT}}\" " >> ./Engine/src/version_auto.h
+          echo "#define BUILD_DATE \"${{env.GITDATE}}\" " >> ./Engine/src/version_auto.h
+          echo "#define COMMIT_HASH \"${{env.GITHASH}}\" " >> ./Engine/src/version_auto.h
+
+      # .NET
+      - name: Install .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      # Prepare Build
+      - name: Prepare Build
+        shell: bash
+        run: |
+          mkdir ./build
+          mkdir ./build/sharp
+          mkdir ./build/sharp/bin
+          mkdir ./build/sharp/bin/linuxsteamrt64
+          mkdir ./build/sharp/core
+          mkdir ./build/sharp/configs
+          mkdir ./build/sharp/gamedata
+
+      # Build Loader
+      - name: Build Loader
+        run: |
+          cd Loader && cmake -P cmkr.cmake && cmake -B build -DCMAKE_C_COMPILER=clang-19 -DCMAKE_CXX_COMPILER=clang++-19 -DCMAKE_BUILD_TYPE=Release && cmake --build build -- -j$(nproc)
+
+      # Build Engine
+      - name: Build Engine
+        run: |
+          cd Engine && cmake -P cmkr.cmake && cmake -B build  -DCMAKE_C_COMPILER=clang-19 -DCMAKE_CXX_COMPILER=clang++-19 -DCMAKE_BUILD_TYPE=Release && cmake --build build -- -j$(nproc)
+
+      # Build Sharp.Core
+      - name: Build Sharp.Core
+        shell: bash
+        env:
+          GITCOMMIT: ${{env.GITCOMMIT}}
+        run: dotnet publish Sharp.Core/Sharp.Core.csproj -f net9.0 -r linux-x64 --no-self-contained -c Release --output ./build/sharp/core -p:VersionSuffix=${{env.GITCOMMIT}}
+
+      # Copy Assets
+      - name: Copy Assets
+        shell: bash
+        run: |
+          cp -r ./.asset/configs  ./build/sharp
+          cp -r ./.asset/gamedata ./build/sharp
+          cp -r ./Engine/build/libmodsharp.so ./build/sharp/bin/libmodsharp.so
+          cp -r ./Loader/build/libserver.so ./build/sharp/bin/linuxsteamrt64/libserver.so
+
+      # Upload
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        if: github.event_name == 'push'
+        env:
+          GITCOMMIT: ${{env.GITCOMMIT}}
+        with:
+          name: ModSharp-git${{env.GITCOMMIT}}-linux
+          path: ./build
+          if-no-files-found: error
+          retention-days: 30
