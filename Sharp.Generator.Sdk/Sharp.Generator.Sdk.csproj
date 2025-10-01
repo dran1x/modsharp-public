@@ -15,12 +15,13 @@
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <PackageType>Analyzer</PackageType>
         <DevelopmentDependency>true</DevelopmentDependency>
-        <IncludeBuildOutput>false</IncludeBuildOutput>
         <IncludeSymbols>false</IncludeSymbols>
-        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
         <SourceControlInformationFeatureSupported>true</SourceControlInformationFeatureSupported>
         <Copyright>©2025 Kxnrl</Copyright>
         <Authors>Kxnrl, BoneTM, laper32, Nukoooo</Authors>
+        <Description>Native Hook Code Generator for ModSharp.</Description>
+        <PackageTags>ModSharp;CS2</PackageTags>
+        <RepositoryType>git</RepositoryType>
         <RepositoryUrl>https://github.com/Kxnrl/ModSharp-public</RepositoryUrl>
         <PackageId>ModSharp.$(AssemblyName)</PackageId>
         <Title>ModSharp.$(AssemblyName)</Title>
