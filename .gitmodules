@@ -1,0 +1,9 @@
+[submodule "Engine/vendors/expected"]
+	path = Engine/vendors/expected
+	url = https://github.com/TartanLlama/expected
+[submodule "Engine/vendors/steamworks"]
+	path = Engine/vendors/steamworks
+	url = https://github.com/SourceSharp/steamworks
+[submodule "Engine/vendors/protobuf"]
+	path = Engine/vendors/protobuf
+	url = https://github.com/protocolbuffers/protobuf
