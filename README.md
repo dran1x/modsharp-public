@@ -1,11 +1,11 @@
 # ModSharp
 
-Counter-Strike 2 Modding platform.
+Modern Valve Modding Solution.
 
 | Language | Link |
 |---:|:---|
-| English | <a style="color:gray">English </a> |
-| 简体中文 | [简体中文](./README.md) |
+| English | English |
+| 简体中文 | [简体中文](./README_ZH.md) |
 
 ## Community
 
