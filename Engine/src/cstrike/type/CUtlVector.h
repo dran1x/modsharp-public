@@ -118,14 +118,14 @@ public:
     int32_t               AddToTail(const T& src);
     [[nodiscard]] int32_t InsertBefore(int32_t index, const T& src);
     [[nodiscard]] int32_t InsertAfter(int32_t index, const T& src);
-    
+
     // Makes sure we have enough memory allocated to store a requested # of elements
     void EnsureCapacity(int32_t num);
 
     // Element removal
-    void FastRemove(int32_t index);         // doesn't preserve order
-    void Remove(int32_t index);             // preserves order, shifts elements
-    void RemoveAll();                       // doesn't deallocate memory
+    void FastRemove(int32_t index); // doesn't preserve order
+    void Remove(int32_t index);     // preserves order, shifts elements
+    void RemoveAll();               // doesn't deallocate memory
 
     // Memory deallocation
     void Purge();
@@ -220,11 +220,64 @@ inline CUtlVector<T, A>::~CUtlVector()
 template <class T, class A>
 CUtlVector<T, A>& CUtlVector<T, A>::operator=(const CUtlVector<T, A>& other)
 {
-    int32_t nCount = other.Count();
-    for (int32_t i = 0; i < nCount; i++)
+    if (this == &other)
+        return *this;
+
+    auto current_size             = m_Size;
+    auto current_allocation_count = m_Memory.NumAllocated();
+
+    int32_t new_size = other.Count();
+
+    auto dest = m_Memory.Base();
+    auto src  = other.m_Memory.Base();
+
+    if (new_size <= current_allocation_count)
     {
-        AddToTail(other[i]);
+        // if T is trivial to copy then just use memcpy to prevent overhead
+        if constexpr (std::is_trivially_copyable_v<T>)
+        {
+            memcpy(dest, src, new_size * sizeof(T));
+        }
+        else
+        {
+            // reuse existing memory if new size is smaller or equal to the current size
+            if (new_size <= current_size)
+            {
+                T* dest_end = std::copy(src, src + new_size, dest);
+
+                // remove extra elements
+                std::destroy_n(dest_end, current_size - new_size);
+            }
+            else // larger than current size but within the allocation count
+            {
+                std::copy(src, src + current_size, dest);
+
+                // copy the new elements into the uninitialized part of the buffer
+                std::uninitialized_copy(src + current_size, src + new_size, dest + current_size);
+            }
+        }
+
+        m_Size = new_size;
     }
+    else
+    {
+        EnsureCapacity(new_size);
+
+        if (new_size > 0)
+        {
+            if constexpr (std::is_trivially_copyable_v<T>)
+            {
+                memcpy(dest, src, sizeof(T) * new_size);
+            }
+            else
+            {
+                std::uninitialized_copy(src, src + new_size, dest);
+            }
+        }
+
+        m_Size = new_size;
+    }
+
     return *this;
 }
 
@@ -357,7 +410,7 @@ template <typename T, class A>
 void CUtlVector<T, A>::FastRemove(int32_t index)
 {
     std::destroy_at(&Element(index));
-    
+
     if (m_Size > 0)
     {
         if (index != m_Size - 1)

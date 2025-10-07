@@ -262,6 +262,9 @@ public:
 template <class B, class T, class I>
 CUtlLeanVectorImpl<B, T, I>& CUtlLeanVectorImpl<B, T, I>::operator=(const CUtlLeanVectorImpl<B, T, I>& other)
 {
+    if (this == &other)
+        return *this;
+
     int32_t nCount = other.Count();
     SetSize(nCount);
 
