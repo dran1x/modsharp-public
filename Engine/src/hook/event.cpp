@@ -118,7 +118,7 @@ static void AddEventHook(const char* pEventName)
     if (std::ranges::find(s_hookedEvent, pEventName) != s_hookedEvent.end())
         return;
 
-    if (eventManager->AddListener(&g_EventListener, pEventName, true))
+    if (eventManager->AddListener(&g_EventListener, pEventName, true) != -1)
     {
         s_hookedEvent.emplace_back(pEventName);
     }
