@@ -209,6 +209,7 @@ using CCSPlayer_MovementServices_TracePlayerBBox_t = void (*)(const Vector& star
 using CTraceFilterPlayerMovementCS_ctor_t          = void (*)(CTraceFilter& filter, CEntityInstance* handleEntity, uint64_t interactWith, uint8_t collisionGroup);
 using FindWeaponVDataByName_t                      = CCSWeaponBaseVData* (*)(int state, const char* weaponName);
 using GetLegacyGameEventListener_t                 = IGameEventListener2* (*)(int32_t);
+using CGameEntitySystem_GetSpawnOriginOffset_t     = matrix3x4_t& (*)(const CGameEntitySystem*);
 
 inline NetworkStateChanged_t                               NetworkStateChanged;
 inline StateChanged_t                                      StateChanged;
@@ -286,7 +287,7 @@ inline CCSPlayer_MovementServices_TracePlayerBBox_t        CCSPlayer_MovementSer
 inline CTraceFilterPlayerMovementCS_ctor_t                 CTraceFilterPlayerMovementCS_ctor;
 inline FindWeaponVDataByName_t                             FindWeaponVDataByName;
 inline GetLegacyGameEventListener_t                        GetLegacyGameEventListener;
-
+inline CGameEntitySystem_GetSpawnOriginOffset_t            CGameEntitySystem_GetSpawnOriginOffset;
 } // namespace server
 
 namespace resource

@@ -68,6 +68,12 @@ CBaseEntity* CGameEntitySystem::FindEntityByIndex(EntityIndex_t index)
     return address::server::CGameEntitySystem_FindEntityByIndex(this, index);
 }
 
+const matrix3x4_t& CGameEntitySystem::GetSpawnOriginOffset() const
+{
+    AssertPtr(this);
+    return address::server::CGameEntitySystem_GetSpawnOriginOffset(this);
+}
+
 CUtlSymbolLarge CGameEntitySystem::AllocPooledString(const char* pStr) const
 {
     AssertPtr(this);
@@ -137,9 +143,9 @@ CBaseEntity* CGameEntitySystem::SpawnEntityFromKeyValuesSync(const char* classna
     info.m_pEntityKeyValues = pKeyValues;
     info.m_pIdentity        = entity->GetEntityIdentity();
 
-    static constexpr matrix3x4_t empty_matrix{};
+    const auto& matrix = GetSpawnOriginOffset();
 
-    g_pGameResourceServiceServer->PrecacheEntitiesAndConfirmResourcesAreLoaded(entity->GetSpawnGroup(), 1, info, empty_matrix);
+    g_pGameResourceServiceServer->PrecacheEntitiesAndConfirmResourcesAreLoaded(entity->GetSpawnGroup(), 1, info, matrix);
 
     entity->DispatchSpawn(pKeyValues);
 

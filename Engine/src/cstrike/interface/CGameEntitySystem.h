@@ -67,8 +67,10 @@ public:
         return reinterpret_cast<T>(FindEntityByEHandle(handle));
     }
 
+    [[nodiscard]] const matrix3x4_t& GetSpawnOriginOffset() const;
+
     // CUtlSymbolLarge
-    CUtlSymbolLarge AllocPooledString(const char* pStr) const;
+    [[nodiscard]] CUtlSymbolLarge AllocPooledString(const char* pStr) const;
 
     CBaseEntity* FindEntityByIndex(EntityIndex_t index);
     CBaseEntity* FindByClassname(CBaseEntity* startEntity, const char* classname);

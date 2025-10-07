@@ -195,6 +195,7 @@ bool address::Initialize()
 
     RESOLVE_GAMEDATA_ADDRESS("FindWeaponVDataByName", address::server::FindWeaponVDataByName);
     RESOLVE_GAMEDATA_ADDRESS("GetLegacyGameEventListener", address::server::GetLegacyGameEventListener);
+    RESOLVE_GAMEDATA_ADDRESS("CGameEntitySystem::GetSpawnOriginOffset", address::server::CGameEntitySystem_GetSpawnOriginOffset);
 
     // ResourceSystem
     RESOLVE_GAMEDATA_ADDRESS("CResourceNameTyped::ResolveResourceName", address::resource::CResourceNameTyped_ResolveResourceName);
