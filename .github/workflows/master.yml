@@ -323,4 +323,55 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
-      
+  nuget:
+    runs-on: ubuntu-latest
+    steps:
+      # TimeZone
+      - name: Set Timezone
+        uses: szenius/set-timezone@v2.0
+        with:
+          timezoneLinux: "Asia/Shanghai"
+          timezoneMacos: "Asia/Shanghai"
+          timezoneWindows: "China Standard Time"
+
+      # CheckOut
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+          fetch-depth: 99999
+
+      # Check Git
+      - name: Check Git
+        shell: bash
+        run: |
+          DATETIME=$(date +"%Y/%m/%d %H:%M:%S")
+          COMMIT_VERSION=$(git rev-list --count HEAD)
+          COMMIT_HASH=$(git rev-parse --short HEAD)
+          echo $DATETIME
+          echo $COMMIT_VERSION
+          echo "GITCOMMIT=$COMMIT_VERSION" >> $GITHUB_ENV
+          echo "GITDATE=$DATETIME" >> $GITHUB_ENV
+          echo "GITHASH=$COMMIT_HASH" >> $GITHUB_ENV
+
+      # .NET
+      - name: Install .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      # Build NuGet
+      - name: Build NuGet
+        shell: bash
+        env:
+          GITCOMMIT: ${{env.GITCOMMIT}}
+        run: |
+          dotnet pack Sharp.Shared/Sharp.Shared.csproj --configuration Release --output .build/nuget -p:VersionSuffix=${{env.GITCOMMIT}}
+          dotnet pack Sharp.Generator.Sdk/Sharp.Generator.Sdk.csproj --configuration Release --output .build/nuget -p:VersionSuffix=${{env.GITCOMMIT}}
+          dotnet pack Sharp.Extensions/GameEventManager/src/Sharp.Extensions.GameEventManager.csproj --configuration Release --output .build/nuget -p:VersionSuffix=${{env.GITCOMMIT}}
+
+      # Publish NuGet
+      - name: Publish NuGet
+        shell: bash
+        run: dotnet nuget push .build/nuget/*.nupkg --skip-duplicate --api-key ${{secrets.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json
+        
