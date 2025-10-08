@@ -23,28 +23,28 @@ using Microsoft.Extensions.DependencyInjection;
 using Sharp.Shared;
 using Sharp.Shared.Abstractions;
 
-namespace Sharp.Extensions.GameEventManager;
+namespace Sharp.Extensions.EntityHookManager;
 
 public static class DependencyInjection
 {
     /// <summary>
-    ///     Add GameEventManager to the service collection.
+    ///     Add EntityHookManager to the service collection.
     /// </summary>
-    public static IServiceCollection AddGameEventManager(this IServiceCollection services, ISharedSystem shared)
+    public static IServiceCollection AddEntityHookManager(this IServiceCollection services, ISharedSystem shared)
         => services.AddSingleton(shared)
-                   .AddSingleton<GameEventManager>()
-                   .AddSingleton<IGameEventManager, GameEventManager>(x => x.GetRequiredService<GameEventManager>())
-                   .AddSingleton<ISharpExtension, GameEventManager>(x => x.GetRequiredService<GameEventManager>());
+                   .AddSingleton<EntityHookManager>()
+                   .AddSingleton<IEntityHookManager, EntityHookManager>(x => x.GetRequiredService<EntityHookManager>())
+                   .AddSingleton<ISharpExtension, EntityHookManager>(x => x.GetRequiredService<EntityHookManager>());
 
     /// <summary>
-    ///     Add GameEventManager to the service collection. <br />
+    ///     Add EntityHookManager to the service collection. <br />
     ///     <remark>requires register <see cref="ISharedSystem" /> before add this</remark>
     /// </summary>
     /// <exception cref="InvalidOperationException">
     ///     If <see cref="ISharedSystem" /> is not registered in the service
     ///     collection.
     /// </exception>
-    public static IServiceCollection AddGameEventManager(this IServiceCollection services)
+    public static IServiceCollection AddEntityHookManager(this IServiceCollection services)
     {
         if (services.All(s => s.ServiceType != typeof(ISharedSystem)))
         {
@@ -52,8 +52,8 @@ public static class DependencyInjection
                 $"{typeof(ISharedSystem).FullName} is not registered in the service collection. Please register it before adding GameEventManager.");
         }
 
-        return services.AddSingleton<GameEventManager>()
-                       .AddSingleton<IGameEventManager, GameEventManager>(x => x.GetRequiredService<GameEventManager>())
-                       .AddSingleton<ISharpExtension, GameEventManager>(x => x.GetRequiredService<GameEventManager>());
+        return services.AddSingleton<EntityHookManager>()
+                       .AddSingleton<IEntityHookManager, EntityHookManager>(x => x.GetRequiredService<EntityHookManager>())
+                       .AddSingleton<ISharpExtension, EntityHookManager>(x => x.GetRequiredService<EntityHookManager>());
     }
 }
