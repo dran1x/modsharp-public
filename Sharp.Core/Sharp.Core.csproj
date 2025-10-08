@@ -16,8 +16,6 @@
         <Authors>Kxnrl, BoneTM, laper32, Nukoooo</Authors>
         <RepositoryUrl>https://github.com/Kxnrl/ModSharp-public</RepositoryUrl>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
-        <IncludeSymbols>true</IncludeSymbols>
-        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
         <SourceControlInformationFeatureSupported>true</SourceControlInformationFeatureSupported>
         <EnableDynamicLoading>true</EnableDynamicLoading>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
