@@ -71,14 +71,14 @@ internal class GameEventManager : IGameEventManager, ISharpExtension, IEventList
             return true;
         }
 
-        var param  = new EventHookParams(e, serverOnly);
+        var param  = false;
         var result = EHookAction.Ignored;
 
         foreach (var callback in callbacks)
         {
             try
             {
-                var ac = callback(in param);
+                var ac = callback(e, ref param);
 
                 if (ac.Action > result)
                 {
@@ -100,7 +100,7 @@ internal class GameEventManager : IGameEventManager, ISharpExtension, IEventList
         // Allow Event
         if (result != EHookAction.Ignored)
         {
-            serverOnly = param.ServerOnly;
+            serverOnly = param;
         }
 
         return true;

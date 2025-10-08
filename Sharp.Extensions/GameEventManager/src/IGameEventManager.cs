@@ -26,7 +26,7 @@ public interface IGameEventManager
 {
     delegate void DelegateOnEventFired(IGameEvent e);
 
-    delegate HookReturnValue<bool> DelegateOnHookEvent(in EventHookParams param);
+    delegate HookReturnValue<bool> DelegateOnHookEvent(IGameEvent e, ref bool serverOnly);
 
     void HookEvent(string eventName, DelegateOnHookEvent callback);
 
