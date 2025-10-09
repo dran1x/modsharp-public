@@ -35,7 +35,7 @@ public interface ISharpExtension
 
 public static class SharpExtensionExtensions
 {
-    public static void LoadAllSharpExtension(this IServiceProvider services)
+    public static void LoadAllSharpExtensions(this IServiceProvider services)
     {
         foreach (var loadable in services.GetServices<ISharpExtension>())
         {
@@ -43,7 +43,7 @@ public static class SharpExtensionExtensions
         }
     }
 
-    public static void ShutdownAllSharpExtension(this IServiceProvider services)
+    public static void ShutdownAllSharpExtensions(this IServiceProvider services)
     {
         foreach (var loadable in services.GetServices<ISharpExtension>())
         {
