@@ -32,18 +32,9 @@
       "library": "engine",
       "linux": "55 48 89 E5 41 57 41 56 41 55 41 54 53 48 81 EC ? ? ? ? 48 89 BD ? ? ? ? 48 8B 3D ? ? ? ? 48 85 FF",
       "windows": "40 55 53 56 57 41 54 41 56 41 57 48 8D AC 24 50 FF FF FF"
-    },
-    "Steam3Server::NotifyClientDisconnect": {
-      "library": "engine",
-      "linux": "48 85 F6 0F 84 ? ? ? ? 55 48 89 E5 41 57 41 56 49 89 FE 41 55 4C 8D 2D",
-      "windows": "48 85 D2 0F 84 ? ? ? ? 48 89 6C 24 20"
     }
   },
   "Offsets": {
-    "CNetworkGameServer::m_MapName": {
-      "linux": 328,
-      "windows": 328
-    },
     // 在 CNetworkGameServer::DisconnectClient 中 if check 最后一个
     "CNetworkGameServer::m_ServerState": {
       "linux": 56,
@@ -75,12 +66,6 @@
     "CServerSideClient::m_FullyAuthenticated": {
       "linux": 2554,
       "windows": 2546
-    },
-    // 搜字符串 "SV: ProcessMove %s on tick %d, packet had too many Move messages (expected only 1, this is %d), disconnecting user\n"
-    // 找 if (var >= 3) 的地方，var是从GameServer里拿的值
-    "CServerSideClient::m_GameServer": {
-      "linux": 80,
-      "windows": 72
     },
     // 搜 "TV client has no downstream TV sink" 最外面的 if 就是
     "CServerSideClient::m_IsHLTV": {

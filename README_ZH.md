@@ -1,6 +1,6 @@
 # ModSharp
 
-现代Valve Modding解决方案
+现代Source 2 Modding解决方案
 
 | Language | Link |
 |---:|:---|
@@ -17,14 +17,14 @@
 
 ## 文档
 
-- [GitHub](https://github.com/Kxnrl/modsharp-public/wiki)
+- [GitHub Wiki](https://github.com/Kxnrl/modsharp-public/wiki)
 
 ## 作者
 
 - [Kxnrl](https://github.com/Kxnrl)
 - [BoneTM](https://github.com/BoneTM)
 - [laper32](https://github.com/laper32)
-- [Nuko](https://github.com/Nukoooo)
+- [Nukoooo](https://github.com/Nukoooo)
 
 ## 版权
 

@@ -1,6 +1,6 @@
 # ModSharp
 
-Modern Valve Modding Solution.
+Modern Source 2 Modding Solution.
 
 | Language | Link |
 |---:|:---|
@@ -17,14 +17,14 @@ Modern Valve Modding Solution.
 
 ## Documentation
 
-- [GitHub](https://github.com/Kxnrl/modsharp-public/wiki)
+- [GitHub Wiki](https://github.com/Kxnrl/modsharp-public/wiki)
 
 ## Authors
 
 - [Kxnrl](https://github.com/Kxnrl)
 - [BoneTM](https://github.com/BoneTM)
 - [laper32](https://github.com/laper32)
-- [Nuko](https://github.com/Nukoooo)
+- [Nukoooo](https://github.com/Nukoooo)
 
 ## License
 
