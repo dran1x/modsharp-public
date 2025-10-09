@@ -1,4 +1,4 @@
-/* 
+/*
  * ModSharp
  * Copyright (C) 2023-2025 Kxnrl. All Rights Reserved.
  *
@@ -56,6 +56,7 @@ static void OnModSharpCommand(const CCommandContext& context, const CCommand& co
         constexpr char credits[] = "  ModSharp " FULL_VERSION_STRING ", by " AUTHORS_STRING "\n"
                                    "To see credits, type \"ms credits\"\n"
                                    "To see version, type \"ms version\"\n"
+                                   "To see modules, type \"ms modules\"\n"
                                    "Visit https://ms.sourcesharp.net/\n\n";
 
         CommandPrintConsole(pClient, credits);

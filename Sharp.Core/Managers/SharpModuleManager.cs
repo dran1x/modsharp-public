@@ -1,4 +1,4 @@
-/* 
+/*
  * ModSharp
  * Copyright (C) 2023-2025 Kxnrl. All Rights Reserved.
  *
@@ -136,22 +136,19 @@ internal class SharpModuleManager : ICoreSharpModuleManager
 
         builder.Append("  ModSharp Modules:\n");
 
-        if (_modules.Count == 0)
-        {
-            builder.Append("    No modules found.\n");
-        }
-        else
-        {
-            for (var i = 0; i < _modules.Count; i++)
-            {
-                var index  = i + 1;
-                var module = _modules[i];
+        var result = 0;
 
+        for (var i = 0; i < _modules.Count; i++)
+        {
+            var index   = i + 1;
+            var module  = _modules[i];
+            var version = module.DisplayVersion;
+
+            if (client is null)
+            {
                 builder.Append($"    #{index,-2} {module.Name}\n");
 
                 builder.Append($"      module : {module.DisplayName}\n");
-
-                var version = module.DisplayVersion;
                 builder.Append($"      version: {version.Major}.{version.Minor}.{version.Build}\n");
 
                 if (module.DisplayAuthor is { } author)
@@ -160,7 +157,26 @@ internal class SharpModuleManager : ICoreSharpModuleManager
                 }
 
                 builder.Append($"      state  : {module.State.ToString()}\n");
+                result++;
             }
+            else if (module.State is ModuleLoadState.Running)
+            {
+                builder.Append($"    #{index,-2} {module.DisplayName}");
+                builder.Append($" ({version.Major}.{version.Minor}.{version.Build})");
+
+                if (module.DisplayAuthor is { } author)
+                {
+                    builder.Append($" by {author}");
+                }
+
+                builder.Append('\n');
+                result++;
+            }
+        }
+
+        if (result == 0)
+        {
+            builder.Append("    No modules found.\n");
         }
 
         if (client is null)
