@@ -1,6 +1,9 @@
 # ModSharp
 
-现代Source 2 Modding解决方案
+现代Source 2 Modding解决方案.
+
+![Release](https://img.shields.io/github/v/release/Kxnrl/modsharp-public?style=for-the-badge&label=Release)
+![NuGet](https://img.shields.io/nuget/v/ModSharp.Sharp.Shared?style=for-the-badge&label=NuGet)
 
 | Language | Link |
 |---:|:---|
@@ -17,7 +20,7 @@
 
 ## 文档
 
-- [GitHub Wiki](https://github.com/Kxnrl/modsharp-public/wiki)
+- [DocFx](https://docs.modsharp.net/)
 
 ## 作者
 

@@ -2,6 +2,9 @@
 
 Modern Source 2 Modding Solution.
 
+![Release](https://img.shields.io/github/v/release/Kxnrl/modsharp-public?style=for-the-badge&label=Release)
+![NuGet](https://img.shields.io/nuget/v/ModSharp.Sharp.Shared?style=for-the-badge&label=NuGet)
+
 | Language | Link |
 |---:|:---|
 | English | English |
@@ -17,7 +20,7 @@ Modern Source 2 Modding Solution.
 
 ## Documentation
 
-- [GitHub Wiki](https://github.com/Kxnrl/modsharp-public/wiki)
+- [DocFx](https://docs.modsharp.net/)
 
 ## Authors
 
