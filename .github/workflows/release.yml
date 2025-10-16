@@ -363,9 +363,9 @@ jobs:
           GITCOMMIT: ${{ needs.prefetch.outputs.git_commit }}
         with:
           overwrite_files: true
-          prerelease: true
+          prerelease: false
           name: ModSharp-git${{env.GITCOMMIT}}
-          tag_name: ${{env.GITCOMMIT}}
+          tag_name: git-${{env.GITCOMMIT}}
           fail_on_unmatched_files: true
           generate_release_notes: true
           files: |

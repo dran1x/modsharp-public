@@ -13,7 +13,6 @@
         <PackageLicenseExpression>AGPL-3.0-only</PackageLicenseExpression>
         <PackageProjectUrl>https://github.com/Kxnrl/ModSharp-public</PackageProjectUrl>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
-        <PackageType>Analyzer</PackageType>
         <IsRoslynComponent>true</IsRoslynComponent>
         <IncludeBuildOutput>false</IncludeBuildOutput>
         <DevelopmentDependency>true</DevelopmentDependency>
@@ -26,6 +25,7 @@
         <PackageTags>ModSharp;CS2</PackageTags>
         <RepositoryType>git</RepositoryType>
         <RepositoryUrl>https://github.com/Kxnrl/ModSharp-public</RepositoryUrl>
+        <IsPackable>true</IsPackable>
         <PackageId>ModSharp.$(AssemblyName)</PackageId>
         <Title>ModSharp.$(AssemblyName)</Title>
     </PropertyGroup>
