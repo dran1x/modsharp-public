@@ -1,0 +1,60 @@
+{
+  "$schema": "https://raw.githubusercontent.com/dotnet/docfx/main/schemas/docfx.schema.json",
+  "metadata": [
+    {
+      "src": [
+        {
+          "src": "../Sharp.Shared",
+          "files": [
+            "**/*.csproj"
+          ]
+        }
+      ],
+      "output": "api"
+    },
+    {
+      "src": [
+        {
+          "src": "../Sharp.Extensions",
+          "files": [
+            "**/*.csproj"
+          ]
+        }
+      ],
+      "output": "api-extensions"
+    }
+  ],
+  "build": {
+    "content": [
+      {
+        "files": [
+          "**/*.{md,yml}"
+        ],
+        "exclude": [
+          "_site/**"
+        ]
+      }
+    ],
+    "resource": [
+      {
+        "files": [
+          "images/**"
+        ]
+      }
+    ],
+    "output": "_site",
+    "template": [
+      "default",
+      "modern",
+      "template"
+    ],
+    "globalMetadata": {
+      "_appName": "ModSharp Documentation",
+      "_appTitle": "ModSharp Documentation",
+      "_disableNewTab": true,
+      "_enableNewTab": true,
+      "_enableSearch": true,
+      "pdf": false
+    }
+  }
+}

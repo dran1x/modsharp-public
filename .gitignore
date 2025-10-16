@@ -4,6 +4,11 @@ build
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+# DocFX
+docfx/_site
+docfx/api
+docfx/api-extensions
+
 # Rift
 .rift
 
