@@ -12,12 +12,9 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     outputs:
-      git_commit: ${{ steps.envvars.outputs.GIT_COMMIT }}
-      branch: ${{ steps.envvars.outputs.BRANCH }}
-      github_sha_short: ${{ steps.envvars.outputs.GITHUB_SHA_SHORT }}
-      date: ${{ steps.envvars.outputs.DATE }}
-      version: ${{ steps.envvars.outputs.VERSION }}
-      version_full: ${{ steps.envvars.outputs.VERSION_FULL }}
+      git_commit: ${{ steps.envvars.outputs.GITCOMMIT }}
+      github_sha_short: ${{ steps.envvars.outputs.GITHASH }}
+      date: ${{ steps.envvars.outputs.GITDATE }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -33,23 +30,15 @@ jobs:
       - name: Make Environment Variables
         id: envvars
         run: |
-          DATE=$(date +"%Y.%m.%d")
-          VERSION_MAJOR=2
-          VERSION_MINOR=0
-          VERSION_PATCH=0
-          VERSION_COMMIT=$(git rev-list --count HEAD)
-          echo "DATE=$DATE"
-          echo "GITHUB_SHA_SHORT=${GITHUB_SHA::7}"
-          echo "GIT_COMMIT=$VERSION_COMMIT"
-          echo "BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"
-          echo "VERSION=$VERSION_MAJOR.$VERSION_MINOR.$VERSION_PATCH"
-          echo "VERSION_FULL=$VERSION_MAJOR.$VERSION_MINOR.$VERSION_PATCH.$VERSION_COMMIT"
-          echo "GITHUB_SHA_SHORT=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
-          echo "GIT_COMMIT=$VERSION_COMMIT" >> $GITHUB_OUTPUT
-          echo "BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
-          echo "DATE=$DATE" >> $GITHUB_OUTPUT
-          echo "VERSION=$VERSION_MAJOR.$VERSION_MINOR.$VERSION_PATCH" >> $GITHUB_OUTPUT
-          echo "VERSION_FULL=$VERSION_MAJOR.$VERSION_MINOR.$VERSION_PATCH.$VERSION_COMMIT" >> $GITHUB_OUTPUT
+          DATETIME=$(date +"%Y/%m/%d %H:%M:%S")
+          COMMIT_VERSION=$(git rev-list --count HEAD)
+          COMMIT_HASH=$(git rev-parse --short HEAD)
+          echo $DATETIME
+          echo $COMMIT_VERSION
+          echo $COMMIT_HASH
+          echo "GITCOMMIT=$COMMIT_VERSION" >> $GITHUB_OUTPUT
+          echo "GITDATE=$DATETIME" >> $GITHUB_OUTPUT
+          echo "GITHASH=$COMMIT_HASH" >> $GITHUB_OUTPUT
 
   windows:
     needs: prefetch
