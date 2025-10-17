@@ -18,7 +18,7 @@ MultiListenerExample.csproj
     <AssemblyName>MultiListenerExample</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="ModSharp.Sharp.Shared" Version="*" PrivateAssets="false" />
+    <PackageReference Include="ModSharp.Sharp.Shared" Version="*" PrivateAssets="all" />
   </ItemGroup>
 </Project>
 ```
@@ -63,7 +63,7 @@ public sealed class  MultiListener : IModSharpModule,
         _sharedSystem.GetModSharp().RemoveGameListener(this);
     }
 
-    public string DisplayName => "Client Listener Example";
+    public string DisplayName => "Multiple Listener Example";
     public string DisplayAuthor => "ModSharp Dev Team";
 
     int IClientListener.ListenerVersion  => IClientListener.ApiVersion;

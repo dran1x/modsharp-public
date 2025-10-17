@@ -12,7 +12,7 @@
 
 ## 下载
 
-请前往 [action](https://github.com/Kxnrl/modsharp-public/actions) 一栏。
+请前往 [Release](https://github.com/Kxnrl/modsharp-public/releases) 页面，下载最新版本即可。
 
 ## 检查环境
 
@@ -105,6 +105,10 @@
 > ├── csgo_imported 
 > ├── csgo_lv
 > ├── sharp
+> │   ├── bin
+> │   ├── configs
+> │   ├── core
+> │   └── gamedata
 > └── thirdpartylegalnotices.txt
 > ```
 
