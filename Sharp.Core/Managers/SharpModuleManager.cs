@@ -313,8 +313,13 @@ internal class SharpModuleManager : ICoreSharpModuleManager
 
         var map = new Dictionary<string, Assembly>(StringComparer.OrdinalIgnoreCase);
 
-        foreach (var dllPath in Directory.GetDirectories(sharedFolder))
+        foreach (var dllPath in Directory.GetDirectories(sharedFolder, "*", SearchOption.TopDirectoryOnly))
         {
+            if (File.Exists(Path.Combine(dllPath, ".disabled")) || dllPath.EndsWith(".disabled"))
+            {
+                continue;
+            }
+
             var name = Path.GetFileName(dllPath);
             var ext  = name.EndsWith(".dll") ? string.Empty : ".dll";
             var file = Path.Combine(dllPath, $"{name}{ext}");
@@ -356,8 +361,13 @@ internal class SharpModuleManager : ICoreSharpModuleManager
     {
         var pluginsFolder = Path.Combine(root, "modules");
 
-        foreach (var dllPath in Directory.GetDirectories(pluginsFolder))
+        foreach (var dllPath in Directory.GetDirectories(pluginsFolder, "*", SearchOption.TopDirectoryOnly))
         {
+            if (File.Exists(Path.Combine(dllPath, ".disabled")) || dllPath.EndsWith(".disabled"))
+            {
+                continue;
+            }
+
             var runtimeConfigFile = Directory
                                     .GetFiles(dllPath, "*.deps.json")
                                     .FirstOrDefault();
