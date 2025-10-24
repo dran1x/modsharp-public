@@ -1,4 +1,4 @@
-/* 
+/*
  * ModSharp
  * Copyright (C) 2023-2025 Kxnrl. All Rights Reserved.
  *
@@ -54,6 +54,7 @@ internal class ClientManager : ICoreClientManager
     private readonly Dictionary<string, IClientManager.DelegateClientCommand?> _commandListeners;
     private readonly Queue<Action>                                             _commandQueue;
     private readonly Dictionary<int, QueryConVarInfo>                          _queryConVarInfos;
+    private readonly Dictionary<SteamID, Admin>                                _admins;
 
     private static int _sQueryCookie;
 
@@ -66,6 +67,7 @@ internal class ClientManager : ICoreClientManager
         _commandListeners   = new Dictionary<string, IClientManager.DelegateClientCommand?>(StringComparer.OrdinalIgnoreCase);
         _commandQueue       = [];
         _queryConVarInfos   = [];
+        _admins             = [];
 
         Forward.OnClientConnected                += OnClientConnected;
         Forward.OnClientActive                   += OnClientPutInServer;
@@ -543,6 +545,52 @@ internal class ClientManager : ICoreClientManager
 
         return _sQueryCookie;
     }
+
+    public IAdmin? FindAdmin(SteamID identity)
+        => _admins.GetValueOrDefault(identity);
+
+    public IAdmin? FindAdmin(string name)
+    {
+        foreach (var (_, admin) in _admins)
+        {
+            if (admin.Name.Equals(name))
+            {
+                return admin;
+            }
+        }
+
+        return null;
+    }
+
+    public IAdmin CreateAdmin(SteamID identity, string name, byte immunity = 0)
+    {
+        if (FindAdmin(identity) is not null)
+        {
+            throw new InvalidOperationException($"Admin identity {identity} is already created");
+        }
+
+        if (FindAdmin(name) is not null)
+        {
+            throw new InvalidOperationException($"Admin name {identity} is already in use");
+        }
+
+        var admin = new Admin(name, identity, immunity);
+
+        return !_admins.TryAdd(identity, admin)
+            ? throw new InvalidOperationException($"Admin {identity}::{name} is already created")
+            : admin;
+    }
+
+    public void DeleteAdmin(IAdmin admin)
+    {
+        if (!_admins.Remove(admin.Identity, out _))
+        {
+            throw new KeyNotFoundException($"Admin [{admin.Identity}] is not an admin");
+        }
+    }
+
+    public IReadOnlyCollection<IAdmin> GetAdmins()
+        => _admins.Values;
 
     private ECommandAction InvokeCommandCallback(IGameClient client,
         IClientManager.DelegateClientCommand                 callbacks,

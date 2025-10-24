@@ -1,4 +1,4 @@
-/* 
+/*
  * ModSharp
  * Copyright (C) 2023-2025 Kxnrl. All Rights Reserved.
  *
@@ -18,6 +18,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using Sharp.Shared.Enums;
 using Sharp.Shared.Listeners;
 using Sharp.Shared.Objects;
@@ -95,4 +96,30 @@ public interface IClientManager
     /// <param name="callback">Callback</param>
     /// <returns>Cookie</returns>
     int QueryConVar(IGameClient client, string name, Action<IGameClient, QueryConVarValueStatus, string, string> callback);
+
+    /// <summary>
+    ///     通过SteamID查找Admin
+    /// </summary>
+    IAdmin? FindAdmin(SteamID identity);
+
+    /// <summary>
+    ///     通过名字查找Admin
+    /// </summary>
+    IAdmin? FindAdmin(string name);
+
+    /// <summary>
+    ///     创建Admin
+    /// </summary>
+    IAdmin CreateAdmin(SteamID identity, string name, byte immunity = 0);
+
+    /// <summary>
+    ///     删除Admin
+    /// </summary>
+    void DeleteAdmin(IAdmin admin);
+
+    /// <summary>
+    ///     获取所有的Admins
+    /// </summary>
+    /// <returns></returns>
+    IReadOnlyCollection<IAdmin> GetAdmins();
 }
